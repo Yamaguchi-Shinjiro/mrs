@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<title>header</title>
+</head>
+<body>
+    <div th:fragment="header" th:remove="tag">
+    	<nav class="navbar is-primary">
+        	<div class="container">
+            	<div class="navbar-brand">
+                	<a class="navbar-item brand-text" href="#">Spring Boot Example</a>
+                	<a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+	                    <span aria-hidden="true"></span>
+    	                <span aria-hidden="true"></span>
+        	            <span aria-hidden="true"></span>
+            	    </a>
+            	</div>
+            	<div id="navMenu" class="navbar-menu">
+	                <div class="navbar-start">
+    	                <a class="navbar-item" href="#" th:href="@{/home}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/home') ? 'is-active':''}">Home</a>
+        	            <a class="navbar-item" href="#" th:href="@{/rooms}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/rooms') ? 'is-active': #httpServletRequest.getRequestURI().startsWith('/reservations') ? 'is-active':''}">Rooms</a>
+                	</div>
+	            	<div class="navbar-end">
+    	        		<div class="navbar-item has-dropdown is-hoverable">
+        	    			<a class="navbar-link">
+            					<span th:text="|${#authentication.principal.user.firstName}　${#authentication.principal.user.lastName}|">山田 太郎</span>
+            				</a>
+            				<div class="navbar-dropdown is-right">
+            					<a class="navbar-item">
+            						<span class="icon is-small">
+            							<i class="fa fa-user"></i>
+            						</span>
+	            					&nbsp; Profile
+    	        				</a>
+        	   					<a class="navbar-item" href="/logout" th:href="@{#}" onclick="javascript:logoutForm.submit()">
+           							<span class="icon is-small">
+            							<i class="fa fa-power-off"></i>
+   	        						</span>
+       	    						&nbsp; Logout
+	           					</a>
+    	        				<form style="visibility: hidden" name="logoutForm" action="#" th:action="@{/logout}" method="post"></form>
+        	    			</div>
+            			</div>
+            		</div>
+            	</div>
+        	</div>
+    	</nav>
+    </div>
+</body>
+</html>
