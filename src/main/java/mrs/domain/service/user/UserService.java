@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @Transactional
@@ -41,7 +42,12 @@ public class UserService {
 	}
 	
 	public void update(User user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		if (StringUtils.isEmpty(user.getPassword())) {
+			User findUser = userRepository.findById(user.getUserId()).get();
+			user.setPassword(findUser.getPassword());
+		} else {
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
+		}
 		userRepository.save(user);
 	}
 	

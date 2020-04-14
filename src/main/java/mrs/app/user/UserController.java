@@ -2,18 +2,23 @@ package mrs.app.user;
 
 import java.util.List;
 
+import javax.validation.groups.Default;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.SmartValidator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import mrs.app.user.UserEditForm.NewUser;
 import mrs.domain.exception.AlreadyRegisteredReservationsException;
 import mrs.domain.model.RoleName;
 import mrs.domain.model.User;
@@ -25,6 +30,19 @@ import mrs.domain.service.user.UserService;
 public class UserController {
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	SmartValidator validator;
+	
+	@ModelAttribute
+	public UserListForm setUpUserListForm() {
+		return new UserListForm();
+	}
+
+	@ModelAttribute
+	public UserEditForm setUpUserEditForm() {
+		return new UserEditForm();
+	}
 	
 	@GetMapping
 	public String index(Model model) {
@@ -48,23 +66,19 @@ public class UserController {
 	}
 
 	@PostMapping
-	String create(@Validated UserEditForm form, BindingResult bindingResult,
+	String create(@Validated({Default.class, NewUser.class}) UserEditForm form, BindingResult bindingResult,
 			@AuthenticationPrincipal ReservationUserDetails userDetails,
 			Model model) {
 		if (bindingResult.hasErrors()) {
 			return newUser(model);
 		}
 		User user = new User();
-		user.setUserId(form.getUserId());
-		user.setFirstName(form.getFirstName());
-		user.setLastName(form.getLastName());
-		user.setPassword(form.getPassword());
-		user.setRoleName(form.getRoleName());
+		BeanUtils.copyProperties(form, user);
 		userService.regist(user);
 		return "redirect:/users";
 	}
 
-	@PutMapping("{userId}")
+	@PostMapping("{userId}/edit")
 	String update(@Validated UserEditForm form, BindingResult bindingResult,
 			@AuthenticationPrincipal ReservationUserDetails userDetails,
 			@PathVariable("userId") String userId,
@@ -73,11 +87,7 @@ public class UserController {
 			return edit(userId, model);
 		}
 		User user = new User();
-		user.setUserId(form.getUserId());
-		user.setFirstName(form.getFirstName());
-		user.setLastName(form.getLastName());
-		user.setPassword(form.getPassword());
-		user.setRoleName(form.getRoleName());
+		BeanUtils.copyProperties(form, user);
 		userService.update(user);
 		return "redirect:/users";
 	}

@@ -10,17 +10,17 @@ import mrs.app.validation.EndTimeMustBeAfterStartTime;
 import mrs.app.validation.ThirtyMinutesUnit;
 
 @Data
-@EndTimeMustBeAfterStartTime(message = "終了時刻は開始時刻より後にしてください")
+@EndTimeMustBeAfterStartTime
 public class ReservationForm implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@NotNull(message = "必須です")
-	@ThirtyMinutesUnit(message = "30分単位で入力してください")
+	@ThirtyMinutesUnit
 	@DateTimeFormat(pattern = "HH:mm")
 	private LocalTime startTime;
 
 	@NotNull(message = "必須です")
-	@ThirtyMinutesUnit(message = "30分単位で入力してください")
+	@ThirtyMinutesUnit
 	@DateTimeFormat(pattern = "HH:mm")
 	private LocalTime endTime;
 }

@@ -14,8 +14,8 @@
 		</div>
 		<div>
 			<form th:object="${userEditForm}"
-	  			th:action="@{/users/{userId}(userId=${user.userId})}"
-  				th:method="put" name="form">
+	  			th:action="@{/users/{userId}/edit(userId=${user.userId})}"
+  				th:method="post" name="form">
   				<div class="field">
 					<label class="label">ユーザID</label>
 					<div class="control">
@@ -29,12 +29,15 @@
 						<input type="text" class="form-control input" id="firstName" name="firstName" style="width: 200px;" placeholder="姓" th:value="${user.firstName}">
 						<input type="text" class="form-control input" id="lastName" name="lastName" style="width: 200px;" placeholder="名" th:value="${user.lastName}">
 					</div>
+					<p th:if="${#fields.hasErrors('*{firstName}')}" th:errors="*{firstName}" class="help is-danger"></p>
+					<p th:if="${#fields.hasErrors('*{lastName}')}" th:errors="*{lastName}" class="help is-danger"></p>
 				</div>
 	  			<div class="field">
 					<label class="label">パスワード</label>
 					<div class="control">
 						<input type="password" class="form-control input" id="password" name="password" style="width: 200px;">
 					</div>
+					<p th:if="${#fields.hasErrors('*{password}')}" th:errors="*{password}" class="help is-danger"></p>
 				</div>
 				<div class="control">
 					<label class="label">ロール</label>
