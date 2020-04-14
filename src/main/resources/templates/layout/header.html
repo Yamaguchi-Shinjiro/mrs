@@ -20,8 +20,8 @@
 	                <div class="navbar-start">
     	                <a class="navbar-item" href="#" th:href="@{/home}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/home') ? 'is-active':''}">Home</a>
         	            <a class="navbar-item" href="#" th:href="@{/reservations/rooms}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/reservations') ? 'is-active':''}">Reservations</a>
-    	                <a class="navbar-item" href="#" th:href="@{/rooms}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/rooms') ? 'is-active':''}">Rooms</a>
-    	                <a class="navbar-item" href="#" th:href="@{/accounts}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/acconts') ? 'is-active':''}">Accounts</a>
+    	                <a class="navbar-item" href="#" >Rooms</a>
+    	                <a class="navbar-item" href="#" th:href="@{/users}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/users') ? 'is-active':''}">Users</a>
                 	</div>
 	            	<div class="navbar-end">
     	        		<div class="navbar-item has-dropdown is-hoverable">

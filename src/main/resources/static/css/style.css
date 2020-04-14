@@ -32,3 +32,10 @@ body {
  position: absolute;/*←絶対位置*/
     bottom: 0; /*下に固定*/
 }
+
+.title {
+	border-bottom: 1px solid #c85179;
+	border-left: 7px solid #c85179;
+	padding: 7px;
+	font-size: 1.2em;
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout/template :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="UTF-8" />
+<title>ユーザ一覧</title>
+</head>
+<body>
+	<div class="container">
+		<div class="title">ユーザ一覧</div>
+		<div class="control">
+			<p style="color: red; font-weight: bold;" th:if="${error != null}" th:text="${error}"></p>
+		</div>
+		<div class="field">
+			<div class="control">
+				<form th:object="${usersListForm}"
+			  		  th:action="@{'/users/search'}"
+		  			  th:method="get" name="form">
+					<div class="field is-grouped">
+  						<p class="control">
+    						<a class="button is-link is-light" href="#" th:href="@{'/users/new'}">
+      						新規
+    						</a>
+  						</p>
+  						<p class="control">
+    						<a class="button is-link is-light" href="#" onclick="edit();">
+      						編集
+    						</a>
+  						</p>
+  						<p class="control">
+    						<a class="button is-danger is-light" href="#" onclick="deleteUser();">
+      						削除
+    						</a>
+  						</p>
+					</div>
+					<table class="table">
+						<tr>
+							<th></th>
+							<th>ユーザID</th>
+							<th>名前</th>
+							<th>ロール</th>
+						</tr>
+						<tr th:each="user : ${users}">
+							<td>
+								<input type="radio" name="selected" th:value="${user.userId}">
+							</td>
+							<td>
+								<span th:text="${user.userId}" ></span>
+							</td>
+							<td>
+								<span th:text="${user.firstName}" ></span>
+								<span th:text="${user.lastName}" ></span>
+							</td>
+							<td>
+								<span th:text="${user.roleName}" ></span>
+							</td>
+						</tr>
+					</table>
+				</form>
+				<form th:object="${usersListForm}"
+			  		  th:action="@{'/users/search'}"
+		  			  th:method="post" name="deleteForm"></form>
+		  	</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		function edit() {
+			var radios = document.getElementsByName('selected');
+			var userId;
+			for(var i=0; i<radios.length; i++){
+			  if (radios[i].checked) {
+			    userId = radios[i].value;
+			    break;
+			  }
+			}
+			document.form.action = '/users/' + userId + '/edit';
+			document.form.submit();
+		}
+		
+		function deleteUser() {
+			var radios = document.getElementsByName('selected');
+			var userId;
+			for(var i=0; i<radios.length; i++){
+			  if (radios[i].checked) {
+			    userId = radios[i].value;
+			    break;
+			  }
+			}
+			document.deleteForm.method = 'post';
+			document.deleteForm.action = '/users/' + userId + '/destroy';
+			document.deleteForm.submit();
+		}
+	</script>
+</body>
+</html>

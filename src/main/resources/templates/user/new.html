@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{layout/template :: layout(~{::title},~{::body/content()})}"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="UTF-8" />
+<title>ユーザ編集</title>
+</head>
+<body>
+	<div class="container">
+		<div class="title">ユーザ新規作成</div>
+		<div class="control">
+			<p style="color: red; font-weight: bold;" th:if="${error != null}" th:text="${error}"></p>
+		</div>
+		<div>
+			<form th:object="${userEditForm}"
+	  			th:action="@{/users}"
+  				th:method="post" name="form">
+  				<div class="field">
+					<label class="label">ユーザID</label>
+					<div class="control">
+						<input type="text" class="form-control input" id="userId" name="userId" style="width: 200px;">
+					</div>
+				</div>
+	  			<div class="field">
+					<label class="label">ユーザ名</label>
+					<div class="control">
+						<input type="text" class="form-control input" id="firstName" name="firstName" style="width: 200px;" placeholder="姓">
+						<input type="text" class="form-control input" id="lastName" name="lastName" style="width: 200px;" placeholder="名">
+					</div>
+				</div>
+	  			<div class="field">
+					<label class="label">パスワード</label>
+					<div class="control">
+						<input type="password" class="form-control input" id="password" name="password" style="width: 200px;">
+					</div>
+				</div>
+				<div class="control">
+					<label class="label">ロール</label>
+					<div class="control">
+						<div class="select">
+							<select name="roleName">
+								<option th:each="roleName : ${T(mrs.domain.model.RoleName).values()}" th:text="${roleName}" th:value="${roleName}">ADMIN</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div style="margin-top: 20px;">
+			<div class="field is-grouped">
+				<p class="control">
+					<a class="button is-primary is-light" href="#" onclick="javascript:form.submit();">
+  						作成
+					</a>
+				</p>
+				<p class="control">
+					<a class="button is-link is-light" href="#" th:href="@{/users}">
+  						ユーザ一覧へ
+					</a>
+				</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
