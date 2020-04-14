@@ -10,7 +10,7 @@ import javax.validation.*;
 @Target({ TYPE, ANNOTATION_TYPE })
 @Retention(RUNTIME)
 public @interface EndTimeMustBeAfterStartTime {
-	String message() default "{mrs.app.reservation.EndTimeMustBeAfterStartTime.message}";
+	String message() default "{mrs.app.validation.EndTimeMustBeAfterStartTime.message}";
 
 	Class<?>[] groups() default {};
 

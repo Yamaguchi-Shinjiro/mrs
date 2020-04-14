@@ -5,39 +5,22 @@ import java.time.LocalTime;
 import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import lombok.Data;
 import mrs.app.validation.EndTimeMustBeAfterStartTime;
 import mrs.app.validation.ThirtyMinutesUnit;
 
-@EndTimeMustBeAfterStartTime(message = "終了時刻は開始時刻より後にしてください")
+@Data
+@EndTimeMustBeAfterStartTime
 public class ReservationForm implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@NotNull(message = "必須です")
-	@ThirtyMinutesUnit(message = "30分単位で入力してください")
+	@ThirtyMinutesUnit
 	@DateTimeFormat(pattern = "HH:mm")
 	private LocalTime startTime;
 
 	@NotNull(message = "必須です")
-	@ThirtyMinutesUnit(message = "30分単位で入力してください")
+	@ThirtyMinutesUnit
 	@DateTimeFormat(pattern = "HH:mm")
 	private LocalTime endTime;
-
-	public LocalTime getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(LocalTime startTime) {
-		this.startTime = startTime;
-	}
-
-	public LocalTime getEndTime() {
-		return endTime;
-	}
-
-	public void setEndTime(LocalTime endTime) {
-		this.endTime = endTime;
-	}
 }
