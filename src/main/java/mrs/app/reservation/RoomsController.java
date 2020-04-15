@@ -1,4 +1,4 @@
-package mrs.app.room;
+package mrs.app.reservation;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("rooms")
+@RequestMapping("reservations/rooms")
 public class RoomsController {
 	@Autowired
 	RoomService roomService;
@@ -22,7 +22,7 @@ public class RoomsController {
 	String listRooms(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @PathVariable("date") LocalDate date, Model model) {
 		List<ReservableRoom> rooms = roomService.findReservableRooms(date);
 		model.addAttribute("rooms", rooms);
-		return "room/listRooms";
+		return "reservation/listRooms";
 	}
 
 	@RequestMapping(method = RequestMethod.GET)

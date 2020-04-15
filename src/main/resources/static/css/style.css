@@ -1,0 +1,41 @@
+/* Fonts */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400);
+
+/* fontawesome */
+@import url(http://weloveiconfonts.com/api/?family=fontawesome);
+[class*="fontawesome-"]:before {
+  font-family: 'FontAwesome', sans-serif;
+}
+
+/* Simple Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* body */
+body {
+  background: #e9e9e9;
+  font: 400 87.5%/1.5em 'Open Sans', sans-serif;
+}
+
+.wrapper{
+    min-height: 100vh;
+    position: relative;/*←相対位置*/
+    padding-bottom: 30px;/*←footerの高さ*/
+    box-sizing: border-box;/*←全て含めてmin-height:100vhに*/
+}
+
+#footer{
+    width: 100%;
+    background-color: #e5eCf9;
+    text-align: center;
+    padding: 0;
+
+ position: absolute;/*←絶対位置*/
+    bottom: 0; /*下に固定*/
+}
+
+.title {
+	border-bottom: 1px solid #c85179;
+	border-left: 7px solid #c85179;
+	padding: 7px;
+	font-size: 1.2em;
+}

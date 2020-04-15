@@ -2,26 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8" />
-	<title></title>
+	<link rel="stylesheet" href="css/login.css"> 
+	<title>Spring Boot Example</title>
 </head>
 <body>
-	<h3>ログインフォーム</h3>
-	<p th:if="${param.error}">Error!</p>
-	<form th:action="@{/login}" method="POST">
-		<table>
-			<tr>
-				<td><label for="username">User:</label></td>
-				<td><input type="text" id="username" name="username" value="aaaa" /></td>
-			</tr>
-			<tr>
-				<td><label for="password">Password:</label></td>
-				<td><input type="password" id="password" name="password" value="demo" /></td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-				<td><button type="submit">ログイン</button></td>
-			</tr>
-		</table>
-	</form>
+	<div class="form-wrapper">
+  		<h1>Sign In</h1>
+  		<form th:action="@{/login}" method="POST">
+    		<div class="form-item">
+      			<label for="username"></label>
+		    	<input type="text" id="username" name="username" required="required" placeholder="Username"></input>
+    		</div>
+    		<div class="form-item">
+      			<label for="password"></label>
+      			<input type="password" id="password" name="password" required="required" placeholder="Password"></input>
+    		</div>
+    		<div class="button-panel">
+      			<input type="submit" class="button" title="Sign In" value="Sign In"></input>
+    		</div>
+  		</form>
+	</div>
 </body>
 </html>
