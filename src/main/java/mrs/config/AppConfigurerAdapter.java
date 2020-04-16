@@ -25,7 +25,8 @@ public class AppConfigurerAdapter implements WebMvcConfigurer {
     public MessageSource messageSource()
     {
         ReloadableResourceBundleMessageSource bean = new ReloadableResourceBundleMessageSource();
-        bean.setBasename("classpath:ValidationMessages");
+        bean.addBasenames("classpath:ValidationMessages");
+        bean.addBasenames("classpath:i18n/Messages");
         bean.setDefaultEncoding("UTF-8");
         return bean;
     }
