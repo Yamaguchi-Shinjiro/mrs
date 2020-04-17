@@ -3,12 +3,12 @@ package mrs.domain.service.reservation;
 import java.util.List;
 
 import mrs.domain.exception.AlreadyReservedException;
-import mrs.domain.exception.UnavailableReservationException;
 import mrs.domain.model.*;
 import mrs.domain.repository.reservation.ReservationRepository;
-import mrs.domain.repository.room.ReservableRoomRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -20,24 +20,30 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservationService {
 	@Autowired
 	ReservationRepository reservationRepository;
-	@Autowired
-	ReservableRoomRepository reservableRoomRepository;
 
-	public List<Reservation> findReservations(ReservableRoomId reservableRoomId) {
-		return reservationRepository.findByReservableRoom_ReservableRoomIdOrderByStartTimeAsc(reservableRoomId);
+	public List<Reservation> findList() {
+		return reservationRepository
+				.findAll(Sort.by(Direction.ASC, "reservedDate").and(Sort.by(Direction.ASC, "startTime")));
 	}
 
-	public Reservation reserve(Reservation reservation) {
-		ReservableRoomId reservableRoomId = reservation.getReservableRoom().getReservableRoomId();
-		// 悲観ロック
-		ReservableRoom reservable = reservableRoomRepository.findOneForUpdateByReservableRoomId(reservableRoomId);
-		if (reservable == null) {
-			throw new UnavailableReservationException("入力の日付・部屋の組み合わせは予約できません。");
-		}
-		// 重複チェック
+	public Reservation create(Reservation reservation) {
 		boolean overlap = reservationRepository
-				.findByReservableRoom_ReservableRoomIdOrderByStartTimeAsc(reservableRoomId).stream()
-				.anyMatch(x -> x.overlap(reservation));
+				.findByMeetingRoomIsAndReservedDateOrderByStartTime(reservation.getMeetingRoom(),
+						reservation.getReservedDate())
+				.stream().anyMatch(x -> x.overlap(reservation));
+		if (overlap) {
+			throw new AlreadyReservedException("入力の時間帯はすでに予約済みです。");
+		}
+		// 予約情報の登録
+		reservationRepository.save(reservation);
+		return reservation;
+	}
+
+	public Reservation edit(Reservation reservation) {
+		boolean overlap = reservationRepository
+				.findByMeetingRoomIsAndReservedDateAndReservationIdNotOrderByStartTime(reservation.getMeetingRoom(),
+						reservation.getReservedDate(), reservation.getReservationId())
+				.stream().anyMatch(x -> x.overlap(reservation));
 		if (overlap) {
 			throw new AlreadyReservedException("入力の時間帯はすでに予約済みです。");
 		}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout/template :: layout(~{::title},~{::body/content()})}"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="UTF-8" />
+<title>予約一覧</title>
+</head>
+<body>
+	<div class="container">
+		<div class="title">予約一覧</div>
+		<div class="control">
+			<p style="color: red; font-weight: bold;" th:if="${error != null}" th:text="${error}"></p>
+		</div>
+		<div class="field">
+			<div class="control">
+					<div class="field is-grouped">
+  						<p class="control">
+    						<a class="button is-link is-light" href="#" th:href="@{'/reservations/new'}">
+      						新規登録
+    						</a>
+  						</p>
+					</div>
+					<table class="table">
+						<tr>
+							<th>予約日</th>
+							<th>時間帯</th>
+							<th>会議室名</th>
+							<th>予約者</th>
+							<th>操作</th>
+						</tr>
+						<tr th:inline="text" th:each="reservation : ${reservations}">
+							<td>[[${#temporals.format(reservation.reservedDate, 'yyyy/MM/dd')}]]</td>
+							<td>[[${reservation.startTime}]]-[[${reservation.endTime}]]</td>
+							<td>[[${reservation.meetingRoom.roomName}]]</td>
+							<td>[[${reservation.user.firstName}]] [[${reservation.user.lastName}]]</td>
+							<td>
+								<div sec:authorize="${hasRole('ADMIN') or principal.user.userId == #vars.reservation.user.userId}">
+									<a href="#" class="button is-small is-link is-light" th:onclick="|edit(${reservation.reservationId})|">変更</a>
+									<a href="#" class="button is-small is-danger is-light" th:onclick="|deleteReservation(${reservation.reservationId})|">取消</a>
+								</div>
+							</td>
+						</tr>
+					</table>
+				<form th:object="${reservationsListForm}"
+			  		  th:action="@{'/reservations/search'}"
+		  			  th:method="get" name="editForm"></form>
+				<form th:object="${reservationsListForm}"
+			  		  th:action="@{'/reservations/search'}"
+		  			  th:method="post" name="deleteForm">
+		  			  <input type="hidden" id="reservationId" name="reservationId" value="" />
+		  		</form>
+		  	</div>
+		</div>
+	</div>
+	<script type="text/javascript" th:inline="javascript">
+		function edit(reservationId) {
+			document.editForm.action = '/reservations/' + reservationId + '/edit';
+			document.editForm.submit();
+		}
+		
+		function deleteReservation(reservationId) {
+			document.deleteForm.reservationId.value = reservationId;
+			document.deleteForm.action = '/reservations/cancel';
+			document.deleteForm.submit();
+		}
+	</script>
+</body>
+</html>
