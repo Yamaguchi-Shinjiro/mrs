@@ -15,7 +15,7 @@
 		<div>
 			<form th:object="${reservationEditForm}"
 	  			th:action="@{/reservations}"
-  				method="post" name="form">
+  				method="post" name="form" autocomplete="off">
   				<div class="field">
 					<label class="label">会議室</label>
 					<div class="control">
@@ -30,7 +30,7 @@
 				<div class="field">
   					<label class="label">予約日</label>
   					<div class="control">
-						<input type="text" class="form-control input" id="reservedDate" name="reservedDate" style="width: 200px;" th:value="${#dates.format(#dates.createNow(), 'yyyy/MM/dd')}">
+						<input type="text" class="form-control input" id="reservedDate" name="reservedDate" style="width: 200px;" th:value="*{reservedDate}">
 					</div>
 				</div>
 				<div class="control">
@@ -39,16 +39,16 @@
 						<select th:field="*{startTime}">
 							<option th:each="time : ${timeList}" th:text="${time}" th:value="${time}">09:00</option>
 						</select>
-						<span th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}" style="color: red">error!</span>
 					</div>
 					<span>-</span>
 					<div class="select">
 						<select th:field="*{endTime}">
 							<option th:each="time : ${timeList}" th:text="${time}" th:value="${time}">10:00</option>
 						</select>
-						<span th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}" style="color: red">error!</span>
 					</div>
 				</div>
+				<span th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}" style="color: red">error!</span>
+				<span th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}" style="color: red">error!</span>
 			</form>
 		</div>
 		<div style="margin-top: 20px;">

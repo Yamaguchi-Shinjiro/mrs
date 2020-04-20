@@ -15,7 +15,7 @@
 		<div>
 			<form th:object="${reservationEditForm}"
 	    			th:action="@{/reservations/{reservationId}/edit(reservationId=${reservation.reservationId})}"
-	 				method="post" name="form">
+	 				method="post" name="form" autocomplete="off">
 				<div class="field">
 	  				<label class="label">会議室</label>
   					<div class="control">
@@ -30,7 +30,7 @@
 				<div class="field">
   					<label class="label">予約日</label>
   					<div class="control">
-    					<input type="text" class="form-control input" id="reservedDate" name="reservedDate" style="width: 200px;" th:value="${#temporals.format(reservation.reservedDate, 'yyyy/MM/dd')}">
+    					<input type="text" class="form-control input" id="reservedDate" name="reservedDate" style="width: 200px;" th:value="${reservation.reservedDate}">
   					</div>
 				</div>
 	  			<div class="field">

@@ -12,6 +12,7 @@ import mrs.domain.service.reservation.*;
 import mrs.domain.service.room.RoomService;
 import mrs.domain.service.user.ReservationUserDetails;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,11 +62,7 @@ public class ReservationsController {
 
 	@GetMapping("new")
 	String newReservation(Model model) {
-		List<LocalTime> timeList = Stream.iterate(LocalTime.of(0, 0), t -> t.plusMinutes(30)).limit(24 * 2)
-				.collect(Collectors.toList());
-		model.addAttribute("timeList", timeList);
-		List<MeetingRoom> rooms = roomService.findList();
-		model.addAttribute("rooms", rooms);
+		initialize(model);
 		return "reservation/new";
 	}
 
@@ -73,7 +70,8 @@ public class ReservationsController {
 	String create(@Validated ReservationEditForm form, BindingResult bindingResult,
 			@AuthenticationPrincipal ReservationUserDetails userDetails, Model model) {
 		if (bindingResult.hasErrors()) {
-			return newReservation(model);
+			initialize(model);
+			return "reservation/new";
 		}
 		Reservation reservation = new Reservation();
 		reservation.setStartTime(form.getStartTime());
@@ -94,11 +92,7 @@ public class ReservationsController {
 
 	@GetMapping("{reservationId}/edit")
 	String editReservation(@PathVariable Integer reservationId, Model model) {
-		List<LocalTime> timeList = Stream.iterate(LocalTime.of(0, 0), t -> t.plusMinutes(30)).limit(24 * 2)
-				.collect(Collectors.toList());
-		model.addAttribute("timeList", timeList);
-		List<MeetingRoom> rooms = roomService.findList();
-		model.addAttribute("rooms", rooms);
+		initialize(model);
 		Reservation reservation = reservationService.findOne(reservationId);
 		model.addAttribute("reservation", reservation);
 		return "reservation/edit";
@@ -109,7 +103,12 @@ public class ReservationsController {
 			@AuthenticationPrincipal ReservationUserDetails userDetails, @PathVariable Integer reservationId,
 			Model model) {
 		if (bindingResult.hasErrors()) {
-			return editReservation(reservationId, model);
+			initialize(model);
+			Reservation reservation = reservationService.findOne(reservationId);
+			BeanUtils.copyProperties(form, reservation);
+			reservation.getMeetingRoom().setRoomId(form.getRoomId());
+			model.addAttribute("reservation", reservation);
+			return "reservation/edit";
 		}
 		Reservation reservation = new Reservation();
 		reservation.setReservationId(reservationId);
@@ -139,5 +138,13 @@ public class ReservationsController {
 			return index(model, pageable);
 		}
 		return "redirect:/reservations";
+	}
+	
+	void initialize(Model model) {
+		List<LocalTime> timeList = Stream.iterate(LocalTime.of(0, 0), t -> t.plusMinutes(30)).limit(24 * 2)
+				.collect(Collectors.toList());
+		model.addAttribute("timeList", timeList);
+		List<MeetingRoom> rooms = roomService.findList();
+		model.addAttribute("rooms", rooms);
 	}
 }
