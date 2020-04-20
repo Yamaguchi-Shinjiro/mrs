@@ -85,16 +85,20 @@ public class ReservationsController {
 			reservationService.create(reservation);
 		} catch (UnavailableReservationException | AlreadyReservedException e) {
 			model.addAttribute("error", e.getMessage());
-			return newReservation(model);
+			initialize(model);
+			return "reservation/new";
 		}
 		return "redirect:/reservations";
 	}
 
 	@GetMapping("{reservationId}/edit")
-	String editReservation(@PathVariable Integer reservationId, Model model) {
+	String editReservation(ReservationEditForm form, @PathVariable Integer reservationId, Model model) {
 		initialize(model);
 		Reservation reservation = reservationService.findOne(reservationId);
-		model.addAttribute("reservation", reservation);
+		BeanUtils.copyProperties(reservation, form);
+		form.setRoomId(reservation.getMeetingRoom().getRoomId());
+		form.setFirstName(reservation.getUser().getFirstName());
+		form.setLastName(reservation.getUser().getLastName());
 		return "reservation/edit";
 	}
 
@@ -104,10 +108,6 @@ public class ReservationsController {
 			Model model) {
 		if (bindingResult.hasErrors()) {
 			initialize(model);
-			Reservation reservation = reservationService.findOne(reservationId);
-			BeanUtils.copyProperties(form, reservation);
-			reservation.getMeetingRoom().setRoomId(form.getRoomId());
-			model.addAttribute("reservation", reservation);
 			return "reservation/edit";
 		}
 		Reservation reservation = new Reservation();
@@ -123,7 +123,8 @@ public class ReservationsController {
 			reservationService.edit(reservation);
 		} catch (UnavailableReservationException | AlreadyReservedException e) {
 			model.addAttribute("error", e.getMessage());
-			return editReservation(reservationId, model);
+			initialize(model);
+			return "reservation/edit";
 		}
 		return "redirect:/reservations";
 	}

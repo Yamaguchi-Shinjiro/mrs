@@ -18,6 +18,10 @@ public class ReservationEditForm implements Serializable {
 	private String reservationId;
 	
 	private Integer roomId;
+	
+	private String firstName;
+	
+	private String lastName;
 
 	@NotNull(message = "必須です")
 	@ThirtyMinutesUnit

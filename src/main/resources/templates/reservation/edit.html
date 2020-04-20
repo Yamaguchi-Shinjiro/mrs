@@ -14,14 +14,14 @@
 		</div>
 		<div>
 			<form th:object="${reservationEditForm}"
-	    			th:action="@{/reservations/{reservationId}/edit(reservationId=${reservation.reservationId})}"
+	    			th:action="@{/reservations/{reservationId}/edit(reservationId=*{reservationId})}"
 	 				method="post" name="form" autocomplete="off">
 				<div class="field">
 	  				<label class="label">会議室</label>
   					<div class="control">
 					<div class="select">
 						<select name="roomId">
-							<option th:each="room : ${rooms}" th:text="${room.roomName}" th:value="${room.roomId}" th:selected="${reservation.meetingRoom.roomId == room.roomId}"></option>
+							<option th:each="room : ${rooms}" th:text="${room.roomName}" th:value="${room.roomId}" th:selected="${reservationEditForm.roomId == room.roomId}"></option>
 						</select>
 						<span th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}" style="color: red">error!</span>
 					</div>
@@ -30,32 +30,34 @@
 				<div class="field">
   					<label class="label">予約日</label>
   					<div class="control">
-    					<input type="text" class="form-control input" id="reservedDate" name="reservedDate" style="width: 200px;" th:value="${reservation.reservedDate}">
+    					<input type="text" class="form-control input" id="reservedDate" name="reservedDate" style="width: 200px;" th:field="*{reservedDate}">
   					</div>
 				</div>
 	  			<div class="field">
 					<label class="label">予約者</label>
 					<div class="control">
-						<span th:text="|${reservation.user.firstName} ${reservation.user.lastName}|"></span>
+						<span th:text="|*{firstName} *{lastName}|"></span>
 					</div>
 				</div>
 				<div class="control">
 					<label class="label">時間帯</label>
 					<div class="select">
 						<select name="startTime">
-							<option th:each="time : ${timeList}" th:text="${time.toString()}" th:value="${time}" th:selected="${reservation.startTime.toString() == time.toString()}"></option>
+							<option th:each="time : ${timeList}" th:text="${time.toString()}" th:value="${time}" th:selected="${reservationEditForm.startTime.toString() == time.toString()}"></option>
 						</select>
 					</div>
 					<span>-</span>
 					<div class="select">
 						<select name="endTime">
-							<option th:each="time : ${timeList}" th:text="${time}" th:value="${time}" th:selected="${reservation.endTime.toString() == time.toString()}">10:00</option>
+							<option th:each="time : ${timeList}" th:text="${time}" th:value="${time}" th:selected="${reservationEditForm.endTime.toString() == time.toString()}">10:00</option>
 						</select>
 					</div>
 				</div>
 				<span th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}" style="color: red">error!</span>
 				<span th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}" style="color: red">error!</span>
-				<input type="hidden" id="reservationId" name="reservationId" th:value="${reservation.reservationId}">
+				<input type="hidden" id="reservationId" name="reservationId" th:value="*{reservationId}">
+				<input type="hidden" id="firstName" name="firstName" th:value="*{firstName}">
+				<input type="hidden" id="lastName" name="lastName" th:value="*{lastName}">
 			</form>
 		</div>
 		<div style="margin-top: 20px;">
