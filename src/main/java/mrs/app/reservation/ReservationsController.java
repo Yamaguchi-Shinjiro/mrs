@@ -13,6 +13,12 @@ import mrs.domain.service.room.RoomService;
 import mrs.domain.service.user.ReservationUserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
+import org.springframework.data.web.SortDefault.SortDefaults;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -28,7 +34,7 @@ public class ReservationsController {
 	RoomService roomService;
 	@Autowired
 	ReservationService reservationService;
-	
+
 	@ModelAttribute
 	ReservationListForm setUpReservationListForm() {
 		return new ReservationListForm();
@@ -42,11 +48,14 @@ public class ReservationsController {
 //		form.setEndTime(LocalTime.of(10, 0));
 		return form;
 	}
-	
+
 	@GetMapping
-	String index(Model model) {
-		List<Reservation> reservations = reservationService.findList();
-		model.addAttribute("reservations", reservations);
+	String index(Model model,
+			@PageableDefault(size = 5) @SortDefaults({ @SortDefault(sort = "reservedDate", direction = Direction.ASC),
+					@SortDefault(sort = "startTime", direction = Direction.ASC) }) Pageable pageable) {
+		Page<Reservation> reservations = reservationService.findList(pageable);
+		model.addAttribute("page", reservations);
+		model.addAttribute("reservations", reservations.getContent());
 		return "reservation/list";
 	}
 
@@ -59,7 +68,7 @@ public class ReservationsController {
 		model.addAttribute("rooms", rooms);
 		return "reservation/new";
 	}
-	
+
 	@PostMapping
 	String create(@Validated ReservationEditForm form, BindingResult bindingResult,
 			@AuthenticationPrincipal ReservationUserDetails userDetails, Model model) {
@@ -82,7 +91,7 @@ public class ReservationsController {
 		}
 		return "redirect:/reservations";
 	}
-	
+
 	@GetMapping("{reservationId}/edit")
 	String editReservation(@PathVariable Integer reservationId, Model model) {
 		List<LocalTime> timeList = Stream.iterate(LocalTime.of(0, 0), t -> t.plusMinutes(30)).limit(24 * 2)
@@ -94,10 +103,11 @@ public class ReservationsController {
 		model.addAttribute("reservation", reservation);
 		return "reservation/edit";
 	}
-	
+
 	@PostMapping("{reservationId}/edit")
 	String update(@Validated ReservationEditForm form, BindingResult bindingResult,
-			@AuthenticationPrincipal ReservationUserDetails userDetails, @PathVariable Integer reservationId, Model model) {
+			@AuthenticationPrincipal ReservationUserDetails userDetails, @PathVariable Integer reservationId,
+			Model model) {
 		if (bindingResult.hasErrors()) {
 			return editReservation(reservationId, model);
 		}
@@ -120,13 +130,13 @@ public class ReservationsController {
 	}
 
 	@PostMapping("cancel")
-	String cancel(@RequestParam("reservationId") Integer reservationId, Model model) {
+	String cancel(@RequestParam("reservationId") Integer reservationId, Model model, Pageable pageable) {
 		try {
 			Reservation reservation = reservationService.findOne(reservationId);
 			reservationService.cancel(reservation);
 		} catch (AccessDeniedException e) {
 			model.addAttribute("error", e.getMessage());
-			return index(model);
+			return index(model, pageable);
 		}
 		return "redirect:/reservations";
 	}

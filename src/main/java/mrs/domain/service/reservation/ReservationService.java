@@ -1,14 +1,12 @@
 package mrs.domain.service.reservation;
 
-import java.util.List;
-
 import mrs.domain.exception.AlreadyReservedException;
 import mrs.domain.model.*;
 import mrs.domain.repository.reservation.ReservationRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -21,9 +19,8 @@ public class ReservationService {
 	@Autowired
 	ReservationRepository reservationRepository;
 
-	public List<Reservation> findList() {
-		return reservationRepository
-				.findAll(Sort.by(Direction.ASC, "reservedDate").and(Sort.by(Direction.ASC, "startTime")));
+	public Page<Reservation> findList(Pageable pageable) {
+		return reservationRepository.findAll(pageable);
 	}
 
 	public Reservation create(Reservation reservation) {
