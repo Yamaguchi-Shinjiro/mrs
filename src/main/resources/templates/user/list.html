@@ -72,7 +72,8 @@
 		function edit() {
 			var userId = getSelectedUserId();
 			if (!userId) {
-				alert(/*[[ #{error.message.unSelected} ]]*/);
+				//alert(/*[[ #{error.message.unSelected} ]]*/ "一覧のデータを選択してください。");
+				alert(/*[[ ${#messages.msg('error.message.unSelected')} ]]*/ "一覧のデータを選択してください。");
 				return;	
 			}
 			document.form.action = '/users/' + userId + '/edit';
@@ -82,7 +83,7 @@
 		function deleteUser() {
 			var userId = getSelectedUserId();
 			if (!userId) {
-				alert(/*[[ #{error.message.unSelected} ]]*/);
+				alert(/*[[ #{error.message.unSelected} ]]*/ "一覧のデータを選択してください。");
 				return;	
 			}
 			document.deleteForm.method = 'post';
