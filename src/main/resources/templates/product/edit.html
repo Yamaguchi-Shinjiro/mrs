@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{layout/template :: layout(~{::title},~{::body/content()})}"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="UTF-8" />
+<title>商品変更</title>
+</head>
+<body>
+	<div class="container">
+		<div class="title">商品変更</div>
+		<div class="control">
+			<p style="color: red; font-weight: bold;" th:if="${error != null}" th:text="${error}"></p>
+		</div>
+		<div>
+			<form th:object="${productEditForm}"
+	    			th:action="@{/products/edit/{productId}(productId=*{productId})}"
+	 				method="post" name="form" autocomplete="off">
+  				<div class="field">
+					<label class="label">商品ID</label>
+					<div class="control">
+						<span th:text="*{productId}"></span>
+  					</div>
+				</div>
+				<span th:if="${#fields.hasErrors('productId')}" th:errors="*{productId}" style="color: red">error!</span>
+				<div class="field">
+  					<label class="label">商品名</label>
+  					<div class="control">
+						<input type="text" class="form-control input" id="productName" name="productName" style="width: 400px;" th:field="*{productName}">
+					</div>
+				</div>
+				<span th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}" style="color: red">error!</span>
+				<div class="field">
+  					<label class="label">ブランド名</label>
+  					<div class="control">
+						<input type="text" class="form-control input" id="brandName" name="brandName" style="width: 400px;" th:field="*{brandName}">
+					</div>
+				</div>
+				<span th:if="${#fields.hasErrors('brandName')}" th:errors="*{brandName}" style="color: red">error!</span>
+				<div class="control">
+					<label class="label">価格</label>
+					<div class="control">
+						<input type="number" class="form-control input" id="price" name="price" style="width: 100px;" th:field="*{price}">
+					</div>
+				</div>
+				<span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" style="color: red">error!</span>
+				<div class="control">
+					<label class="label">在庫有無</label>
+					<label class="checkbox">
+						<input type="checkbox" id="inStock" name="inStock" th:field="*{inStock}">
+						在庫あり
+					</label>
+				</div>
+				<span th:if="${#fields.hasErrors('inStock')}" th:errors="*{inStock}" style="color: red">error!</span>
+				<input type="hidden" id="productId" name="productId" th:value="*{productId}">
+			</form>
+		</div>
+		<div style="margin-top: 20px;">
+			<div class="field is-grouped">
+				<p class="control">
+    				<a class="button is-primary is-light" href="#" onclick="javascript:form.submit();">
+    				変更
+    				</a>
+  				</p>
+  				<p class="control">
+    				<a class="button is-link is-light" href="#" th:href="@{'/products'}">
+    				商品一覧へ
+    				</a>
+  				</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
