@@ -3,7 +3,8 @@ package mrs.domain.service.room;
 import java.util.List;
 
 import mrs.domain.model.MeetingRoom;
-import mrs.domain.repository.room.MeetingRoomRepository;
+import mrs.domain.repository.MeetingRoomRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;

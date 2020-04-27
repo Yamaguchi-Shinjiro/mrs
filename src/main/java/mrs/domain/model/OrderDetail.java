@@ -17,14 +17,16 @@ public class OrderDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	private String orderNo;
+	@Id
 	private Integer lineNo;
 	
 	@ManyToOne
-	@JoinColumn(name = "product_id")
+	@JoinColumn(name = "productId")
 	private Product product;
 	
 	private Integer amount;
 	
 	private BigDecimal purchasePrice;
-
+	
 }

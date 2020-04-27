@@ -1,7 +1,7 @@
 package mrs.domain.service.product;
 
 import mrs.domain.model.*;
-import mrs.domain.repository.product.ProductRepository;
+import mrs.domain.repository.ProductRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

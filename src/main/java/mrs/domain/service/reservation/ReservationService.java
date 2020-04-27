@@ -2,7 +2,7 @@ package mrs.domain.service.reservation;
 
 import mrs.domain.exception.AlreadyReservedException;
 import mrs.domain.model.*;
-import mrs.domain.repository.reservation.ReservationRepository;
+import mrs.domain.repository.ReservationRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
