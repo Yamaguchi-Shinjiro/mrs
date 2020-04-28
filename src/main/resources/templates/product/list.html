@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout/template :: layout(~{::title},~{::body/content()})}"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="UTF-8" />
+<title>商品一覧</title>
+</head>
+<body>
+	<div class="container">
+		<div class="title">商品一覧</div>
+		<div class="control">
+			<p style="color: red; font-weight: bold;" th:if="${error != null}" th:text="${error}"></p>
+		</div>
+		<div class="field">
+			<div class="control">
+					<div class="field is-grouped">
+  						<p class="control">
+    						<a class="button is-link is-light" href="#" th:href="@{'/products/new'}">
+      						新規登録
+    						</a>
+  						</p>
+					</div>
+					<div class="field" id="pagination-info">
+						<label class="label" th:text="|Total ${page.totalElements} results  Page ${page.number + 1} of ${page.totalPages}|"></label>
+					</div>
+					<table class="table">
+						<tr>
+							<th>商品ID</th>
+							<th>商品名</th>
+							<th>ブランド名</th>
+							<th>価格</th>
+							<th>在庫</th>
+							<th>操作</th>
+						</tr>
+						<tr th:inline="text" th:each="product : ${products}">
+							<td>[[${product.productId}]]</td>
+							<td>[[${product.productName}]]</td>
+							<td>[[${product.brandName}]]</td>
+							<td class="has-text-right">[[${#numbers.formatInteger(product.price, 3, 'COMMA')}]]</td>
+							<td class="has-text-centered">[[${product.inStock == true ? 'あり' : 'なし'}]]</td>
+							<td>
+								<a href="#" class="button is-small is-link is-light" th:attr="onclick='edit(\'' + ${product.productId} + '\')'">変更</a>
+								<a href="#" class="button is-small is-danger is-light" th:attr="onclick='deleteProduct(\'' + ${product.productId} + '\')'">取消</a>
+							</td>
+						</tr>
+					</table>
+				<form th:object="${productListForm}"
+			  		  th:action="@{'/products/search'}"
+		  			  th:method="get" name="editForm"></form>
+				<form th:object="${productListForm}"
+			  		  th:action="@{'/products/search'}"
+		  			  th:method="post" name="deleteForm">
+		  			  <input type="hidden" id="productId" name="productId" value="" />
+		  		</form>
+		  	</div>
+		</div>
+        <nav th:if="${page.totalPages > 0}" th:fragment='paginationbar' class="pagination" role="navigation" aria-label="pagination">
+            <ul class="pagination-list">
+                <li th:class="${page.first} ? 'disabled':''" style="display:inline">
+                    <span class="pagination-link" th:if="${page.first}" disabled>&laquo;</span>
+                    <a class="pagination-link" th:if="${not page.first}" th:href="@{${url}(page=0)}">&laquo;</a>
+                </li>
+                <li th:class="${page.first} ? 'disabled':''" style="display:inline">
+                    <span class="pagination-link" th:if="${page.first}" disabled>&lsaquo;</span>
+                    <a class="pagination-link" th:if="${not page.first}" th:href="@{${url}(page=(${page.number}-1))}">&lsaquo;</a>
+                </li>
+                <li th:each='i : ${#numbers.sequence(0, page.totalPages-1)}' th:class="(${i}==${page.number})? 'active' : ''" style="display:inline">
+                    <span class="pagination-link is-current" th:if='${i}==${page.number}' th:text='${i+1}'>1</span>
+                    <a class="pagination-link" th:if='${i}!=${page.number}' th:href="@{${url}(page=${i})}">
+                        <span th:text='${i+1}'>1</span>
+                    </a>
+                </li>
+                <li th:class="${page.last} ? 'disabled':''" style="display:inline">
+                    <span class="pagination-link" th:if="${page.last}" disabled>&rsaquo;</span>
+                    <a class="pagination-link" th:if="${not page.last}" th:href="@{${url}(page=(${page.number}+1))}">&rsaquo;</a>
+                </li>
+                <li th:class="${page.last} ? 'disabled':''" style="display:inline">
+                    <span class="pagination-link" th:if="${page.last}" disabled>&raquo;</span>
+                    <a class="pagination-link" th:if="${not page.last}" th:href="@{${url}(page=(${page.totalPages}-1))}">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+	</div>
+	<script type="text/javascript" th:inline="javascript">
+		function edit(productId) {
+			document.editForm.action = '/products/edit/' + productId;
+			document.editForm.submit();
+		}
+		
+		function deleteProduct(productId) {
+			document.deleteForm.productId.value = productId;
+			document.deleteForm.action = '/products/cancel';
+			document.deleteForm.submit();
+		}
+	</script>
+</body>
+</html>

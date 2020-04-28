@@ -5,8 +5,8 @@ import java.util.List;
 import mrs.domain.exception.AlreadyRegisteredReservationsException;
 import mrs.domain.model.Reservation;
 import mrs.domain.model.User;
-import mrs.domain.repository.reservation.ReservationRepository;
-import mrs.domain.repository.user.UserRepository;
+import mrs.domain.repository.ReservationRepository;
+import mrs.domain.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
