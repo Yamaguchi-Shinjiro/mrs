@@ -24,3 +24,4 @@ CREATE TABLE IF NOT EXISTS product (
   in_stock BOOL NOT NULL,
   PRIMARY KEY (product_id)
 );
+create sequence order_data_order_no_seq INCREMENT BY 1 MAXVALUE 99999999 START WITH 1 NO CYCLE;
