@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout/template :: layout(~{::title},~{::body/content()})}"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="UTF-8" />
+<title>予約一覧</title>
+</head>
+<body>
+	<div class="container">
+		<div class="title">予約一覧</div>
+		<div class="control">
+			<p style="color: red; font-weight: bold;" th:if="${error != null}" th:text="${error}"></p>
+		</div>
+		<div class="field">
+			<div class="control">
+					<div class="field is-grouped">
+  						<p class="control">
+    						<a class="button is-link is-light" href="#" th:href="@{'/reservations/new'}">
+      						新規登録
+    						</a>
+  						</p>
+					</div>
+					<div class="field" id="pagination-info">
+						<label class="label" th:text="|Total ${page.totalElements} results  Page ${page.number + 1} of ${page.totalPages}|"></label>
+					</div>
+					<table class="table">
+						<tr>
+							<th>予約日</th>
+							<th>時間帯</th>
+							<th>会議室名</th>
+							<th>予約者</th>
+							<th>操作</th>
+						</tr>
+						<tr th:inline="text" th:each="reservation : ${reservations}">
+							<td>[[${#temporals.format(reservation.reservedDate, 'yyyy/MM/dd')}]]</td>
+							<td>[[${reservation.startTime}]]-[[${reservation.endTime}]]</td>
+							<td>[[${reservation.meetingRoom.roomName}]]</td>
+							<td>[[${reservation.user.firstName}]] [[${reservation.user.lastName}]]</td>
+							<td>
+								<div sec:authorize="${hasRole('ADMIN') or principal.user.userId == #vars.reservation.user.userId}">
+									<a href="#" class="button is-small is-link is-light" th:onclick="|edit(${reservation.reservationId})|">変更</a>
+									<a href="#" class="button is-small is-danger is-light" th:onclick="|deleteReservation(${reservation.reservationId})|">取消</a>
+								</div>
+							</td>
+						</tr>
+					</table>
+				<form th:object="${reservationsListForm}"
+			  		  th:action="@{'/reservations/search'}"
+		  			  th:method="get" name="editForm"></form>
+		  	</div>
+		</div>
+        <nav th:if="${page.totalPages > 0}" th:fragment='paginationbar' class="pagination" role="navigation" aria-label="pagination">
+            <ul class="pagination-list">
+                <li th:class="${page.first} ? 'disabled':''" style="display:inline">
+                    <span class="pagination-link" th:if="${page.first}" disabled>&laquo;</span>
+                    <a class="pagination-link" th:if="${not page.first}" th:href="@{${url}(page=0)}">&laquo;</a>
+                </li>
+                <li th:class="${page.first} ? 'disabled':''" style="display:inline">
+                    <span class="pagination-link" th:if="${page.first}" disabled>&lsaquo;</span>
+                    <a class="pagination-link" th:if="${not page.first}" th:href="@{${url}(page=(${page.number}-1))}">&lsaquo;</a>
+                </li>
+                <li th:each='i : ${#numbers.sequence(0, page.totalPages-1)}' th:class="(${i}==${page.number})? 'active' : ''" style="display:inline">
+                    <span class="pagination-link is-current" th:if='${i}==${page.number}' th:text='${i+1}'>1</span>
+                    <a class="pagination-link" th:if='${i}!=${page.number}' th:href="@{${url}(page=${i})}">
+                        <span th:text='${i+1}'>1</span>
+                    </a>
+                </li>
+                <li th:class="${page.last} ? 'disabled':''" style="display:inline">
+                    <span class="pagination-link" th:if="${page.last}" disabled>&rsaquo;</span>
+                    <a class="pagination-link" th:if="${not page.last}" th:href="@{${url}(page=(${page.number}+1))}">&rsaquo;</a>
+                </li>
+                <li th:class="${page.last} ? 'disabled':''" style="display:inline">
+                    <span class="pagination-link" th:if="${page.last}" disabled>&raquo;</span>
+                    <a class="pagination-link" th:if="${not page.last}" th:href="@{${url}(page=(${page.totalPages}-1))}">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+	</div>
+	<div class="modal" id="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head is-danger">
+                <p class="modal-card-title">確認</p>
+            </header>
+            <section class="modal-card-body">
+                本当に削除してよろしいですか。
+            </section>
+            <footer class="modal-card-foot is-right">
+                <form th:action="@{'/reservations'}" method="POST" name="deleteForm">
+                    <button type="button" class="button is-info" id="delete-cancel-button">キャンセル</button>
+                    <button type="submit" class="button is-danger">はい</button>
+                    <input type="hidden" id="reservationId" name="reservationId" value="" />
+                </form>
+            </footer>
+        </div>
+    </div>
+	<script type="text/javascript" th:inline="javascript">
+		function edit(reservationId) {
+			document.editForm.action = '/reservations/' + reservationId + '/edit';
+			document.editForm.submit();
+		}
+		function deleteReservation(reservationId) {
+			var m = document.getElementById('modal');
+			m.classList.add('is-active');
+			document.deleteForm.reservationId.value = reservationId;
+			document.deleteForm.action = '/reservations/cancel';
+		}
+		document.getElementById('delete-cancel-button').addEventListener('click', event => {
+			var m = document.getElementById('modal');
+			m.classList.remove('is-active');
+		});
+	</script>
+</body>
+</html>

@@ -3,10 +3,10 @@ package mrs.app.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import mrs.app.reservation.ReservationForm;
+import mrs.app.reservation.ReservationEditForm;
 
 public class EndTimeMustBeAfterStartTimeValidator
-		implements ConstraintValidator<EndTimeMustBeAfterStartTime, ReservationForm> {
+		implements ConstraintValidator<EndTimeMustBeAfterStartTime, ReservationEditForm> {
 	private String message;
 
 	@Override
@@ -15,7 +15,7 @@ public class EndTimeMustBeAfterStartTimeValidator
 	}
 
 	@Override
-	public boolean isValid(ReservationForm value, ConstraintValidatorContext context) {
+	public boolean isValid(ReservationEditForm value, ConstraintValidatorContext context) {
 		if (value.getStartTime() == null || value.getEndTime() == null) {
 			return true;
 		}

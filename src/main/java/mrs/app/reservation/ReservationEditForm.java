@@ -1,6 +1,7 @@
 package mrs.app.reservation;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,8 +12,16 @@ import mrs.app.validation.ThirtyMinutesUnit;
 
 @Data
 @EndTimeMustBeAfterStartTime
-public class ReservationForm implements Serializable {
+public class ReservationEditForm implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
+	private String reservationId;
+	
+	private Integer roomId;
+	
+	private String firstName;
+	
+	private String lastName;
 
 	@NotNull(message = "必須です")
 	@ThirtyMinutesUnit
@@ -23,4 +32,7 @@ public class ReservationForm implements Serializable {
 	@ThirtyMinutesUnit
 	@DateTimeFormat(pattern = "HH:mm")
 	private LocalTime endTime;
+	
+	@DateTimeFormat(pattern = "yyyy/MM/dd")
+	private LocalDate reservedDate;
 }

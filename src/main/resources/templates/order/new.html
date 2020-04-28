@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{layout/template :: layout(~{::title},~{::body/content()})}"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="UTF-8" />
+<title>注文登録</title>
+</head>
+<body>
+	<div class="container">
+		<div class="title">注文登録</div>
+		<div class="control">
+			<p style="color: red; font-weight: bold;" th:if="${error != null}" th:text="${error}"></p>
+		</div>
+		<form th:object="${orderEditForm}"
+   			th:action="@{/orders/products/search}"
+ 			method="post" name="editForm" autocomplete="off">
+			<div id="searchArea">
+				<div class="field">
+					<div class="control">
+						<input type="text" class="form-control input" id="productIdSearch" name="productIdSearch" style="width: 100px;" placeholder="商品ID" th:field="*{productIdSearch}">
+						<input type="text" class="form-control input" id="productNameSearch" name="productNameSearch" style="width: 200px;" placeholder="商品名" th:field="*{productNameSearch}">
+						<a class="button is-link is-light" href="javascript:editForm.submit()">検索</a>
+						<a class="button is-link is-light" href="#" th:href="@{'/orders'}">注文一覧へ</a>
+  					</div>
+				</div>
+				<table class="table" th:if="${orderEditForm.products != null && orderEditForm.products.size() > 0}">
+					<tr>
+						<th></th>
+						<th>商品ID</th>
+						<th>商品名</th>
+						<th>ブランド名</th>
+						<th>価格</th>
+						<th>在庫</th>
+					</tr>
+					<tr th:inline="text" th:each="product : ${orderEditForm.products}">
+						<td><a href="#" class="button is-small is-link is-light" th:attr="onclick='addProduct(\'' + ${product.productId} + '\')'">追加</a></td>
+						<td>[[${product.productId}]]</td>
+						<td>[[${product.productName}]]</td>
+						<td>[[${product.brandName}]]</td>
+						<td class="has-text-right">[[${#numbers.formatInteger(product.price, 3, 'COMMA')}]]</td>
+						<td class="has-text-centered">[[${product.inStock == true ? 'あり' : 'なし'}]]</td>
+					</tr>
+				</table>
+				<div th:if="${orderEditForm.products != null && orderEditForm.products.size() > 0}" id="pagingArea" style="margin-bottom: 1.5rem">
+	    	    	<nav th:if="${orderEditForm.pageInfo.totalPages > 0}" th:fragment='paginationbar' class="pagination" role="navigation" aria-label="pagination">
+		    	        <ul class="pagination-list">
+    		    	        <li th:class="${orderEditForm.pageInfo.first} ? 'disabled':''" style="display:inline">
+	        		            <span class="pagination-link" th:if="${orderEditForm.pageInfo.first}" disabled>&laquo;</span>
+    	        		        <a class="pagination-link" th:if="${not orderEditForm.pageInfo.first}" th:href="@{/orders/products/next(page=0)}">&laquo;</a>
+        	        		</li>
+		    	            <li th:class="${orderEditForm.pageInfo.first} ? 'disabled':''" style="display:inline">
+    		    	            <span class="pagination-link" th:if="${orderEditForm.pageInfo.first}" disabled>&lsaquo;</span>
+        		    	        <a class="pagination-link" th:if="${not orderEditForm.pageInfo.first}" th:href="@{/orders/products/next(page=(${orderEditForm.pageInfo.number}-1))}">&lsaquo;</a>
+            		    	</li>
+	                		<li th:each='i : ${#numbers.sequence(0, orderEditForm.pageInfo.totalPages-1)}' th:class="(${i}==${orderEditForm.pageInfo.number})? 'active' : ''" style="display:inline">
+		                	    <span class="pagination-link is-current" th:if='${i}==${orderEditForm.pageInfo.number}' th:text='${i+1}'>1</span>
+    		                	<a class="pagination-link" th:if='${i}!=${orderEditForm.pageInfo.number}' th:href="@{/orders/products/next(page=${i})}">
+	        		                <span th:text='${i+1}'>1</span>
+    	        		        </a>
+        	        		</li>
+	        	        	<li th:class="${orderEditForm.pageInfo.last} ? 'disabled':''" style="display:inline">
+	    	        	        <span class="pagination-link" th:if="${orderEditForm.pageInfo.last}" disabled>&rsaquo;</span>
+    	    	        	    <a class="pagination-link" th:if="${not orderEditForm.pageInfo.last}" th:href="@{/orders/products/next(page=(${orderEditForm.pageInfo.number}+1))}">&rsaquo;</a>
+	    	        	    </li>
+    	    	        	<li th:class="${orderEditForm.pageInfo.last} ? 'disabled':''" style="display:inline">
+        	    	        	<span class="pagination-link" th:if="${orderEditForm.pageInfo.last}" disabled>&raquo;</span>
+	        	    	        <a class="pagination-link" th:if="${not orderEditForm.pageInfo.last}" th:href="@{/orders/products/next(page=(${orderEditForm.pageInfo.totalPages}-1))}">&raquo;</a>
+	    	        	    </li>
+		        	    </ul>
+    		    	</nav>
+        		</div>
+			</div>
+			<div id="inputArea" th:if="${orderEditForm.cartProducts != null && orderEditForm.cartProducts.size() > 0}">
+				<p class="label">【注文商品】</p>
+				<table class="table" id="cartTable">
+					<tr>
+						<th>商品ID</th>
+						<th>商品名</th>
+						<th>ブランド名</th>
+						<th>価格</th>
+						<th>在庫</th>
+						<th>数量</th>
+						<th>操作</th>
+					</tr>
+					<tr th:inline="text" th:each="product, stat : *{cartProducts}">
+						<td>[[${product.productId}]]</td>
+						<td>[[${product.productName}]]</td>
+						<td>[[${product.brandName}]]</td>
+						<td class="has-text-right">[[${#numbers.formatInteger(product.price, 3, 'COMMA')}]]</td>
+						<td class="has-text-centered">[[${product.inStock == true ? 'あり' : 'なし'}]]</td>
+						<td>
+							<input type="number" class="form-control input is-small" id="amount" name="amount" th:name="'cartProducts[' + ${stat.index} + '].amount'" style="width: 100px;" value="0">
+							<input type="hidden" id="productId" name="productId" th:name="'cartProducts[' + ${stat.index} + '].productId'" value="" th:value="${product.productId}"/>
+							<input type="hidden" id="lineNo" name="lineNo" th:name="'cartProducts[' + ${stat.index} + '].lineNo'" value="" th:value="${product.lineNo}"/>
+						</td>
+						<td><a href="#" class="button is-small is-link is-light" th:attr="onclick='delCartProduct(\'' + ${product.lineNo} + '\')'">削除</a></td>
+					</tr>
+				</table>
+				<div style="margin-top: 20px;">
+					<div class="field is-grouped">
+						<p class="control">
+							<a class="button is-primary is-light" href="#" onclick="regist()">
+							新規登録
+							</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			<input type="hidden" id="addProductId" name="addProductId" value="" />
+			<input type="hidden" id="delLineNo" name="delLineNo" value="" />
+		</form>
+	</div>
+	<form th:object="${orderEditForm}"
+		  th:action="@{'/orders/product/add'}"
+  		  th:method="post" name="addProductForm">
+  		  <input type="hidden" id="productId" name="productId" value="" />
+  	</form>
+
+	<script type="text/javascript" th:inline="javascript">
+		function delCartProduct(lineNo) {
+			document.editForm.action = "/orders/product/del"
+			document.editForm.delLineNo.value = lineNo;
+			document.editForm.submit();
+		}
+		function addProduct(productId) {
+			document.editForm.action = "/orders/product/add"
+			document.editForm.addProductId.value = productId;
+			document.editForm.submit();
+		}
+		function regist() {
+			document.editForm.action = "/orders"
+			document.editForm.submit();
+		}
+	</script>
+	
+</body>
+</html>

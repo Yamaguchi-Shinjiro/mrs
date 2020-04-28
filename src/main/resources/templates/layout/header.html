@@ -9,7 +9,7 @@
     	<nav class="navbar is-primary">
         	<div class="container">
             	<div class="navbar-brand">
-                	<a class="navbar-item brand-text" href="#">Spring Boot Example</a>
+                	<a class="navbar-item brand-text" href="#">Spring Boot Practice</a>
                 	<a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
 	                    <span aria-hidden="true"></span>
     	                <span aria-hidden="true"></span>
@@ -19,9 +19,11 @@
             	<div id="navMenu" class="navbar-menu">
 	                <div class="navbar-start">
     	                <a class="navbar-item" href="#" th:href="@{/home}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/home') ? 'is-active':''}">Home</a>
-        	            <a class="navbar-item" href="#" th:href="@{/reservations/rooms}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/reservations') ? 'is-active':''}">Reservations</a>
+        	            <a class="navbar-item" href="#" th:href="@{/reservations}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/reservations') ? 'is-active':''}">Reservations</a>
     	                <a class="navbar-item" href="#" >Rooms</a>
     	                <a class="navbar-item" href="#" th:href="@{/users}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/users') ? 'is-active':''}">Users</a>
+    	                <a class="navbar-item" href="#" th:href="@{/orders}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/orders') ? 'is-active':''}">Orders</a>
+    	                <a class="navbar-item" href="#" th:href="@{/products}" th:classappend="${#httpServletRequest.getRequestURI().startsWith('/products') ? 'is-active':''}">Products</a>
                 	</div>
 	            	<div class="navbar-end">
     	        		<div class="navbar-item has-dropdown is-hoverable">

@@ -1,6 +1,5 @@
 package mrs.app.reservation;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,8 +12,14 @@ import mrs.domain.service.reservation.*;
 import mrs.domain.service.room.RoomService;
 import mrs.domain.service.user.ReservationUserDetails;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
+import org.springframework.data.web.SortDefault.SortDefaults;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -24,7 +29,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("reservations/{date}/{roomId}")
+@RequestMapping("reservations")
 public class ReservationsController {
 	@Autowired
 	RoomService roomService;
@@ -32,60 +37,115 @@ public class ReservationsController {
 	ReservationService reservationService;
 
 	@ModelAttribute
-	ReservationForm setUpForm() {
-		ReservationForm form = new ReservationForm();
+	ReservationListForm setUpReservationListForm() {
+		return new ReservationListForm();
+	}
+
+	@ModelAttribute
+	ReservationEditForm setUpReservationEditForm() {
+		ReservationEditForm form = new ReservationEditForm();
 		// デフォルト値
-		form.setStartTime(LocalTime.of(9, 0));
-		form.setEndTime(LocalTime.of(10, 0));
+//		form.setStartTime(LocalTime.of(9, 0));
+//		form.setEndTime(LocalTime.of(10, 0));
 		return form;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	String reserveForm(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @PathVariable("date") LocalDate date,
-			@PathVariable("roomId") Integer roomId, Model model) {
-		ReservableRoomId reservableRoomId = new ReservableRoomId(roomId, date);
-		List<Reservation> reservations = reservationService.findReservations(reservableRoomId);
-		List<LocalTime> timeList = Stream.iterate(LocalTime.of(0, 0), t -> t.plusMinutes(30)).limit(24 * 2)
-				.collect(Collectors.toList());
-		model.addAttribute("room", roomService.findMeetingRoom(roomId));
-		model.addAttribute("reservations", reservations);
-		model.addAttribute("timeList", timeList);
-		return "reservation/reserveForm";
+	@GetMapping
+	String index(Model model,
+			@PageableDefault(size = 5) @SortDefaults({ @SortDefault(sort = "reservedDate", direction = Direction.ASC),
+					@SortDefault(sort = "startTime", direction = Direction.ASC) }) Pageable pageable) {
+		Page<Reservation> reservations = reservationService.findList(pageable);
+		model.addAttribute("page", reservations);
+		model.addAttribute("reservations", reservations.getContent());
+		return "reservation/list";
 	}
-	
-	@RequestMapping(method = RequestMethod.POST)
-	String reserve(@Validated ReservationForm form, BindingResult bindingResult,
-			@AuthenticationPrincipal ReservationUserDetails userDetails,
-			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @PathVariable("date") LocalDate date,
-			@PathVariable("roomId") Integer roomId, Model model) {
+
+	@GetMapping("new")
+	String newReservation(Model model) {
+		initialize(model);
+		return "reservation/new";
+	}
+
+	@PostMapping
+	String create(@Validated ReservationEditForm form, BindingResult bindingResult,
+			@AuthenticationPrincipal ReservationUserDetails userDetails, Model model) {
 		if (bindingResult.hasErrors()) {
-			return reserveForm(date, roomId, model);
+			initialize(model);
+			return "reservation/new";
 		}
-		ReservableRoom reservableRoom = new ReservableRoom(new ReservableRoomId(roomId, date));
 		Reservation reservation = new Reservation();
 		reservation.setStartTime(form.getStartTime());
 		reservation.setEndTime(form.getEndTime());
-		reservation.setReservableRoom(reservableRoom);
 		reservation.setUser(userDetails.getUser());
+		MeetingRoom room = new MeetingRoom();
+		room.setRoomId(form.getRoomId());
+		reservation.setMeetingRoom(room);
+		reservation.setReservedDate(form.getReservedDate());
 		try {
-			reservationService.reserve(reservation);
+			reservationService.create(reservation);
 		} catch (UnavailableReservationException | AlreadyReservedException e) {
 			model.addAttribute("error", e.getMessage());
-			return reserveForm(date, roomId, model);
+			initialize(model);
+			return "reservation/new";
 		}
-		return "redirect:/reservations/{date}/{roomId}";
+		return "redirect:/reservations";
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = "cancel")
-	String cancel(@RequestParam("reservationId") Integer reservationId, @PathVariable("roomId") Integer roomId,
-			@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @PathVariable("date") LocalDate date, Model model) {
+	@GetMapping("{reservationId}/edit")
+	String editReservation(ReservationEditForm form, @PathVariable Integer reservationId, Model model) {
+		initialize(model);
+		Reservation reservation = reservationService.findOne(reservationId);
+		BeanUtils.copyProperties(reservation, form);
+		form.setRoomId(reservation.getMeetingRoom().getRoomId());
+		form.setFirstName(reservation.getUser().getFirstName());
+		form.setLastName(reservation.getUser().getLastName());
+		return "reservation/edit";
+	}
+
+	@PostMapping("{reservationId}/edit")
+	String update(@Validated ReservationEditForm form, BindingResult bindingResult,
+			@AuthenticationPrincipal ReservationUserDetails userDetails, @PathVariable Integer reservationId,
+			Model model) {
+		if (bindingResult.hasErrors()) {
+			initialize(model);
+			return "reservation/edit";
+		}
+		Reservation reservation = new Reservation();
+		reservation.setReservationId(reservationId);
+		reservation.setStartTime(form.getStartTime());
+		reservation.setEndTime(form.getEndTime());
+		reservation.setUser(userDetails.getUser());
+		MeetingRoom room = new MeetingRoom();
+		room.setRoomId(form.getRoomId());
+		reservation.setMeetingRoom(room);
+		reservation.setReservedDate(form.getReservedDate());
+		try {
+			reservationService.edit(reservation);
+		} catch (UnavailableReservationException | AlreadyReservedException e) {
+			model.addAttribute("error", e.getMessage());
+			initialize(model);
+			return "reservation/edit";
+		}
+		return "redirect:/reservations";
+	}
+
+	@PostMapping("cancel")
+	String cancel(@RequestParam("reservationId") Integer reservationId, Model model, Pageable pageable) {
 		try {
 			Reservation reservation = reservationService.findOne(reservationId);
 			reservationService.cancel(reservation);
 		} catch (AccessDeniedException e) {
 			model.addAttribute("error", e.getMessage());
-			return reserveForm(date, roomId, model);
+			return index(model, pageable);
 		}
-		return "redirect:/reservations/{date}/{roomId}";
+		return "redirect:/reservations";
+	}
+	
+	void initialize(Model model) {
+		List<LocalTime> timeList = Stream.iterate(LocalTime.of(0, 0), t -> t.plusMinutes(30)).limit(24 * 2)
+				.collect(Collectors.toList());
+		model.addAttribute("timeList", timeList);
+		List<MeetingRoom> rooms = roomService.findList();
+		model.addAttribute("rooms", rooms);
 	}
 }

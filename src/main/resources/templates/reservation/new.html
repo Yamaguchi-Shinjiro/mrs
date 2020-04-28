@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  th:replace="~{layout/template :: layout(~{::title},~{::body/content()})}"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="UTF-8" />
+<title>予約登録</title>
+</head>
+<body>
+	<div class="container">
+		<div class="title">予約登録</div>
+		<div class="control">
+			<p style="color: red; font-weight: bold;" th:if="${error != null}" th:text="${error}"></p>
+		</div>
+		<div>
+			<form th:object="${reservationEditForm}"
+	  			th:action="@{/reservations}"
+  				method="post" name="form" autocomplete="off">
+  				<div class="field">
+					<label class="label">会議室</label>
+					<div class="control">
+						<div class="select">
+							<select th:field="*{roomId}">
+								<option th:each="room : ${rooms}" th:text="${room.roomName}" th:value="${room.roomId}">1</option>
+							</select>
+							<span th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}" style="color: red">error!</span>
+						</div>
+  					</div>
+				</div>
+				<div class="field">
+  					<label class="label">予約日</label>
+  					<div class="control">
+						<input type="text" class="form-control input" id="reservedDate" name="reservedDate" style="width: 200px;" th:field="*{reservedDate}">
+					</div>
+				</div>
+				<div class="control">
+					<label class="label">時間帯</label>
+					<div class="select">
+						<select th:field="*{startTime}">
+							<option th:each="time : ${timeList}" th:text="${time}" th:value="${time}">09:00</option>
+						</select>
+					</div>
+					<span>-</span>
+					<div class="select">
+						<select th:field="*{endTime}">
+							<option th:each="time : ${timeList}" th:text="${time}" th:value="${time}">10:00</option>
+						</select>
+					</div>
+				</div>
+				<span th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}" style="color: red">error!</span>
+				<span th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}" style="color: red">error!</span>
+			</form>
+		</div>
+		<div style="margin-top: 20px;">
+			<div class="field is-grouped">
+				<p class="control">
+					<a class="button is-primary is-light" href="#" onclick="javascript:form.submit();">
+					新規登録
+					</a>
+				</p>
+				<p class="control">
+					<a class="button is-link is-light" href="#" th:href="@{'/reservations'}">
+					予約一覧へ
+					</a>
+				</p>
+			</div>
+		</div>
+	</div>
+	<script>
+		var picker = new Pikaday({
+    		field: document.getElementById('reservedDate'),
+    		format: 'YYYY/MM/DD',
+    		onSelect: function() {
+	        	console.log(this.getMoment().format('YYYY/MM/DD'));
+    		}
+		});
+	</script>
+</body>
+</html>
