@@ -24,16 +24,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("orders")
 @SessionAttributes(types = { OrderListForm.class, OrderEditForm.class })
 public class OrderController {
 	private final OrderService orderService;
 	
-	public OrderController(OrderService orderService) {
-		this.orderService = orderService;
-	}
-
 	@ModelAttribute(value = "orderListForm")
 	OrderListForm setUpOrderListForm() {
 		return new OrderListForm();

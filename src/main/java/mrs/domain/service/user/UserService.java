@@ -15,18 +15,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 @Transactional
 public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final ReservationRepository reservationRepository;
-	
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ReservationRepository reservationRepository) {
-		this.userRepository = userRepository;
-		this.passwordEncoder = passwordEncoder;
-		this.reservationRepository = reservationRepository;
-	}
 	
 	public List<User> findUsers() {
 		return userRepository.findAll(Sort.by(Sort.Direction.ASC, "UserId"));

@@ -11,16 +11,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @SuppressWarnings("deprecation")
 @Service
 @Transactional
 public class ReservationService {
 	private final ReservationRepository reservationRepository;
 	
-	public ReservationService(ReservationRepository reservationRepository) {
-		this.reservationRepository = reservationRepository;
-	}
-
 	public Page<Reservation> findList(Pageable pageable) {
 		return reservationRepository.findAll(pageable);
 	}

@@ -9,16 +9,15 @@ import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @SuppressWarnings("deprecation")
 @Service
 @Transactional
 public class ProductService {
 	private final ProductRepository productRepository;
 	
-	public ProductService(ProductRepository productRepository) {
-		this.productRepository = productRepository;
-	}
-
 	public Page<Product> findList(Pageable pageable) {
 		return productRepository.findAll(pageable);
 	}

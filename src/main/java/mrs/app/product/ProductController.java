@@ -19,15 +19,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("products")
 public class ProductController {
 	private final ProductService productService;
 	
-	public ProductController(ProductService productService) {
-		this.productService = productService;
-	}
-
 	@ModelAttribute
 	ProductListForm setUpProductListForm() {
 		return new ProductListForm();

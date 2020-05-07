@@ -13,6 +13,9 @@ import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @SuppressWarnings("deprecation")
 @Service
 @Transactional
@@ -21,12 +24,6 @@ public class OrderService {
 	private final OrderDataCustomRepository orderDataCustomRepository;
 	private final ProductRepository productRepository;
 	
-	public OrderService(OrderDataRepository orderDataRepository, OrderDataCustomRepository orderDataCustomRepository, ProductRepository productRepository) {
-		this.orderDataRepository = orderDataRepository;
-		this.orderDataCustomRepository = orderDataCustomRepository;
-		this.productRepository = productRepository;
-	}
-
 	public Page<OrderData> findList(Pageable pageable) {
 		return orderDataRepository.findAll(pageable);
 	}

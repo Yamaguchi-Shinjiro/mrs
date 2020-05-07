@@ -13,7 +13,6 @@ import mrs.domain.service.room.RoomService;
 import mrs.domain.service.user.ReservationUserDetails;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -28,17 +27,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("reservations")
 public class ReservationsController {
 	private final RoomService roomService;
 	private final ReservationService reservationService;
 	
-	public ReservationsController(ReservationService reservationService, RoomService roomService) {
-		this.reservationService = reservationService;
-		this.roomService = roomService;
-	}
-
 	@ModelAttribute
 	ReservationListForm setUpReservationListForm() {
 		return new ReservationListForm();

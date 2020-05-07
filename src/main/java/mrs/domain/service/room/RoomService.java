@@ -10,15 +10,14 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 @Transactional
 public class RoomService {
 	private final MeetingRoomRepository meetingRoomRepository;
 	
-	public RoomService(MeetingRoomRepository meetingRoomRepository) {
-		this.meetingRoomRepository = meetingRoomRepository;
-	}
-
 	public MeetingRoom findMeetingRoom(Integer roomId) {
 		return meetingRoomRepository.findById(roomId).orElse(null);
 	}

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import lombok.RequiredArgsConstructor;
 import mrs.app.user.UserEditForm.NewUser;
 import mrs.domain.exception.AlreadyRegisteredReservationsException;
 import mrs.domain.model.RoleName;
@@ -23,14 +24,11 @@ import mrs.domain.model.User;
 import mrs.domain.service.user.ReservationUserDetails;
 import mrs.domain.service.user.UserService;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("users")
 public class UserController {
 	private final UserService userService;
-	
-	public UserController(UserService userService) {
-		this.userService = userService;
-	}
 	
 	@ModelAttribute
 	public UserListForm setUpUserListForm() {
