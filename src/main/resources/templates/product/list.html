@@ -33,7 +33,7 @@
 							<th>在庫</th>
 							<th>操作</th>
 						</tr>
-						<tr th:inline="text" th:each="product : ${products}">
+						<tr th:each="product : ${products}">
 							<td>[[${product.productId}]]</td>
 							<td>[[${product.productName}]]</td>
 							<td>[[${product.brandName}]]</td>

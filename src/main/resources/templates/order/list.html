@@ -32,7 +32,7 @@
 							<th>注文金額</th>
 							<th>操作</th>
 						</tr>
-						<tr th:inline="text" th:each="order : ${orders}">
+						<tr th:each="order : ${orders}">
 							<td>[[${order.orderNo}]]</td>
 							<td>[[${#temporals.format(order.orderDate, 'yyyy/MM/dd HH:mm')}]]</td>
 							<td>[[${order.user.firstName}]] [[${order.user.lastName}]]</td>

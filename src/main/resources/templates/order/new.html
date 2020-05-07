@@ -33,7 +33,7 @@
 						<th>価格</th>
 						<th>在庫</th>
 					</tr>
-					<tr th:inline="text" th:each="product : ${orderEditForm.products}">
+					<tr th:each="product : ${orderEditForm.products}">
 						<td><a href="#" class="button is-small is-link is-light" th:attr="onclick='addProduct(\'' + ${product.productId} + '\')'">追加</a></td>
 						<td>[[${product.productId}]]</td>
 						<td>[[${product.productName}]]</td>
@@ -83,7 +83,7 @@
 						<th>数量</th>
 						<th>操作</th>
 					</tr>
-					<tr th:inline="text" th:each="product, stat : *{cartProducts}">
+					<tr th:each="product, stat : *{cartProducts}">
 						<td>[[${product.productId}]]</td>
 						<td>[[${product.productName}]]</td>
 						<td>[[${product.brandName}]]</td>

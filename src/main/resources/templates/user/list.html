@@ -40,7 +40,7 @@
 							<th>名前</th>
 							<th>ロール</th>
 						</tr>
-						<tr th:inline="text" th:each="user : ${users}">
+						<tr th:each="user : ${users}">
 							<td>
 								<input type="radio" name="selected" th:value="${user.userId}">
 							</td>
