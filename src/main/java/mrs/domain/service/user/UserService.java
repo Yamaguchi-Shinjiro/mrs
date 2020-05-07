@@ -8,7 +8,6 @@ import mrs.domain.model.User;
 import mrs.domain.repository.ReservationRepository;
 import mrs.domain.repository.UserRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,14 +18,15 @@ import org.springframework.util.StringUtils;
 @Service
 @Transactional
 public class UserService {
-	@Autowired
-	UserRepository userRepository;
+	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final ReservationRepository reservationRepository;
 	
-	@Autowired
-    PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	ReservationRepository reservationRepository;
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ReservationRepository reservationRepository) {
+		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
+		this.reservationRepository = reservationRepository;
+	}
 	
 	public List<User> findUsers() {
 		return userRepository.findAll(Sort.by(Sort.Direction.ASC, "UserId"));

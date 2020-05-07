@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -29,8 +28,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("orders")
 @SessionAttributes(types = { OrderListForm.class, OrderEditForm.class })
 public class OrderController {
-	@Autowired
-	OrderService orderService;
+	private final OrderService orderService;
+	
+	public OrderController(OrderService orderService) {
+		this.orderService = orderService;
+	}
 
 	@ModelAttribute(value = "orderListForm")
 	OrderListForm setUpOrderListForm() {

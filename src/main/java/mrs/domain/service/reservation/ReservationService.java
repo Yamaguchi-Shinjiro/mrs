@@ -4,7 +4,6 @@ import mrs.domain.exception.AlreadyReservedException;
 import mrs.domain.model.*;
 import mrs.domain.repository.ReservationRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.method.P;
@@ -16,8 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class ReservationService {
-	@Autowired
-	ReservationRepository reservationRepository;
+	private final ReservationRepository reservationRepository;
+	
+	public ReservationService(ReservationRepository reservationRepository) {
+		this.reservationRepository = reservationRepository;
+	}
 
 	public Page<Reservation> findList(Pageable pageable) {
 		return reservationRepository.findAll(pageable);

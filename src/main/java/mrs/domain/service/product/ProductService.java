@@ -3,7 +3,6 @@ package mrs.domain.service.product;
 import mrs.domain.model.*;
 import mrs.domain.repository.ProductRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.method.P;
@@ -14,8 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class ProductService {
-	@Autowired
-	ProductRepository productRepository;
+	private final ProductRepository productRepository;
+	
+	public ProductService(ProductRepository productRepository) {
+		this.productRepository = productRepository;
+	}
 
 	public Page<Product> findList(Pageable pageable) {
 		return productRepository.findAll(pageable);

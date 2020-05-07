@@ -31,10 +31,13 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("reservations")
 public class ReservationsController {
-	@Autowired
-	RoomService roomService;
-	@Autowired
-	ReservationService reservationService;
+	private final RoomService roomService;
+	private final ReservationService reservationService;
+	
+	public ReservationsController(ReservationService reservationService, RoomService roomService) {
+		this.reservationService = reservationService;
+		this.roomService = roomService;
+	}
 
 	@ModelAttribute
 	ReservationListForm setUpReservationListForm() {

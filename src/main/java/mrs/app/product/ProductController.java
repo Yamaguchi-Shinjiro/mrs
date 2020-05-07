@@ -5,7 +5,6 @@ import mrs.domain.service.product.ProductService;
 import mrs.domain.service.user.ReservationUserDetails;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -23,8 +22,11 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("products")
 public class ProductController {
-	@Autowired
-	ProductService productService;
+	private final ProductService productService;
+	
+	public ProductController(ProductService productService) {
+		this.productService = productService;
+	}
 
 	@ModelAttribute
 	ProductListForm setUpProductListForm() {

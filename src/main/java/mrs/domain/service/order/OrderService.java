@@ -6,7 +6,6 @@ import mrs.domain.repository.OrderDataRepository;
 import mrs.domain.repository.ProductRepository;
 import static mrs.domain.service.order.ProductSpecifications.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,14 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class OrderService {
-	@Autowired
-	OrderDataRepository orderDataRepository;
+	private final OrderDataRepository orderDataRepository;
+	private final OrderDataCustomRepository orderDataCustomRepository;
+	private final ProductRepository productRepository;
 	
-	@Autowired
-	OrderDataCustomRepository orderDataCustomRepository;
-
-	@Autowired
-	ProductRepository productRepository;
+	public OrderService(OrderDataRepository orderDataRepository, OrderDataCustomRepository orderDataCustomRepository, ProductRepository productRepository) {
+		this.orderDataRepository = orderDataRepository;
+		this.orderDataCustomRepository = orderDataCustomRepository;
+		this.productRepository = productRepository;
+	}
 
 	public Page<OrderData> findList(Pageable pageable) {
 		return orderDataRepository.findAll(pageable);
